@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spike Publisher — Publishing automation for the Spike channel</title>
+<meta name="description" content="Spike Publisher is an in-house tool that uploads the Spike channel's own finished videos to its own YouTube, TikTok and Instagram accounts on a schedule, with captions and AI-content disclosure labels.">
+<style>
+  :root{
+    --bg:#0e1411; --bg2:#131b17; --panel:#18211c; --line:#26332b;
+    --ink:#e7efe9; --muted:#9db0a5; --dim:#7c8f84;
+    --lime:#9be15d; --lime2:#5fcf5f; --ring:rgba(155,225,93,.35);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji",sans-serif;
+    line-height:1.6; font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--lime); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:960px; margin:0 auto; padding:0 22px}
+  header.nav{
+    position:sticky; top:0; z-index:10;
+    background:rgba(14,20,17,.82); backdrop-filter:saturate(140%) blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{display:flex; align-items:center; justify-content:space-between; height:60px}
+  .brand{display:flex; align-items:center; gap:11px; font-weight:700; color:var(--ink); font-size:18px}
+  .brand:hover{text-decoration:none}
+  .logo{
+    width:30px; height:30px; border-radius:8px; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--lime),var(--lime2));
+    display:grid; place-items:center; color:#0e1411; font-weight:900; font-size:17px;
+  }
+  .nav-links{display:flex; gap:20px; font-size:15px}
+  .nav-links a{color:var(--muted)}
+  .nav-links a:hover{color:var(--ink); text-decoration:none}
+
+  .hero{padding:74px 0 54px; border-bottom:1px solid var(--line)}
+  .pill{
+    display:inline-block; font-size:13px; letter-spacing:.3px; color:var(--lime);
+    border:1px solid var(--ring); background:rgba(155,225,93,.06);
+    padding:5px 12px; border-radius:999px; margin-bottom:22px;
+  }
+  h1{font-size:clamp(30px,5vw,46px); line-height:1.12; margin:0 0 16px; letter-spacing:-.02em}
+  h1 .g{background:linear-gradient(120deg,var(--lime),#d8f7a6); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lede{font-size:clamp(17px,2.4vw,20px); color:var(--muted); max-width:640px; margin:0 0 26px}
+  .cta{display:flex; gap:14px; flex-wrap:wrap; align-items:center}
+  .btn{
+    display:inline-block; padding:11px 20px; border-radius:10px; font-weight:600; font-size:15px;
+    background:var(--lime); color:#0e1411; border:1px solid var(--lime);
+  }
+  .btn:hover{text-decoration:none; filter:brightness(1.05)}
+  .btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--ring)}
+
+  section{padding:56px 0; border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--lime2); margin:0 0 10px; font-weight:700}
+  h2{font-size:clamp(23px,3.4vw,30px); margin:0 0 14px; letter-spacing:-.01em}
+  p.sub{color:var(--muted); max-width:680px; margin:0 0 30px}
+
+  .grid{display:grid; gap:18px; grid-template-columns:repeat(3,1fr)}
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px;
+  }
+  .card h3{margin:0 0 8px; font-size:18px}
+  .card p{margin:0; color:var(--muted); font-size:15.5px}
+  .card .ic{
+    width:38px; height:38px; border-radius:10px; margin-bottom:14px;
+    background:rgba(155,225,93,.1); border:1px solid var(--ring);
+    display:grid; place-items:center; color:var(--lime); font-weight:800; font-size:18px;
+  }
+
+  .steps{display:grid; gap:14px; counter-reset:s}
+  .step{
+    display:grid; grid-template-columns:44px 1fr; gap:16px; align-items:start;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px;
+  }
+  .step .n{
+    width:44px; height:44px; border-radius:11px; display:grid; place-items:center;
+    background:linear-gradient(135deg,var(--lime),var(--lime2)); color:#0e1411; font-weight:900; font-size:19px;
+  }
+  .step h3{margin:0 0 4px; font-size:17px}
+  .step p{margin:0; color:var(--muted); font-size:15.5px}
+  .flow{display:flex; align-items:center; gap:10px; flex-wrap:wrap; color:var(--dim); font-size:15px; margin-top:22px}
+  .flow b{color:var(--ink); font-weight:600}
+  .flow .arw{color:var(--lime2)}
+
+  .about-links{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px}
+  .chip{
+    display:inline-flex; align-items:center; gap:8px; padding:9px 15px; border-radius:10px;
+    border:1px solid var(--line); background:var(--bg2); color:var(--ink); font-size:15px; font-weight:600;
+  }
+  .chip:hover{border-color:var(--ring); text-decoration:none}
+  .chip .d{width:8px; height:8px; border-radius:50%; background:var(--lime)}
+
+  .contact-box{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:26px;
+    display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:center;
+  }
+  .contact-box .lbl{color:var(--muted); font-size:14px; margin:0 0 4px}
+  .contact-box .val{font-size:19px; font-weight:600; margin:0}
+
+  footer.site{padding:34px 0 46px; color:var(--dim); font-size:14.5px}
+  .foot-in{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center}
+  .foot-links{display:flex; gap:18px; flex-wrap:wrap}
+  .foot-links a{color:var(--muted)}
+  .foot-links a:hover{color:var(--ink)}
+
+  @media(max-width:720px){
+    body{font-size:16px}
+    .grid{grid-template-columns:1fr}
+    .nav-links{gap:14px; font-size:14px}
+    .hero{padding:52px 0 40px}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html"><span class="logo">S</span> Spike Publisher</a>
+    <nav class="nav-links">
+      <a href="#what">What it does</a>
+      <a href="#how">How it works</a>
+      <a href="#about">About Spike</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="border-bottom:1px solid var(--line)">
+    <div class="wrap">
+      <span class="pill">Single-operator publishing tool</span>
+      <h1><span class="g">Spike Publisher</span><br>Publishing automation for the Spike channel</h1>
+      <p class="lede">An in-house tool that takes the Spike channel's own finished videos and uploads them to its own YouTube, TikTok and Instagram accounts — on a schedule, with captions and AI-content disclosure labels already attached.</p>
+      <div class="cta">
+        <a class="btn" href="#how">See how it works</a>
+        <a class="btn ghost" href="#about">About the channel</a>
+      </div>
+      <p style="margin-top:24px; color:var(--dim); font-size:14.5px">
+        Read our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms of Service</a>.
+      </p>
+    </div>
+  </section>
+
+  <section id="what">
+    <div class="wrap">
+      <p class="eyebrow">What it does</p>
+      <h2>One creator, one channel, one publish button</h2>
+      <p class="sub">Spike Publisher is not a platform and has no users. It is the private release step of a single content pipeline — it moves finished files from the creator's machine to the creator's own accounts, correctly labeled, at the right time.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="ic">1</div>
+          <h3>Staged uploads</h3>
+          <p>Each video is prepared and staged with its title, description, captions and thumbnail, then reviewed before anything leaves the machine.</p>
+        </div>
+        <div class="card">
+          <div class="ic">▶</div>
+          <h3>One-button GO</h3>
+          <p>A single confirmed action pushes the staged upload to YouTube, TikTok or Instagram through their official Content Posting APIs.</p>
+        </div>
+        <div class="card">
+          <div class="ic">⏱</div>
+          <h3>Engine-side scheduling</h3>
+          <p>Publish times are set at upload using each platform's native scheduling, so episodes go live at the planned slot without manual re-visits.</p>
+        </div>
+        <div class="card">
+          <div class="ic">◎</div>
+          <h3>AI-content labeling</h3>
+          <p>The channel is animated and partly AI-assisted, so every upload carries the platform's AI-generated / altered-content disclosure by default.</p>
+        </div>
+        <div class="card">
+          <div class="ic">≡</div>
+          <h3>Captions attached</h3>
+          <p>Karaoke-style captions authored in the pipeline travel with the video, so accessibility isn't a manual afterthought.</p>
+        </div>
+        <div class="card">
+          <div class="ic">✓</div>
+          <h3>Owner accounts only</h3>
+          <p>The tool authenticates against the creator's own accounts and touches nothing else — no third-party users, no audience data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2>From finished render to live episode</h2>
+      <p class="sub">The publishing engine is a command-line tool run by the operator. It follows the same four steps every time.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <div><h3>Prepare</h3><p>A finished video plus its metadata manifest (title, description, captions, disclosure flags, target platforms and publish time) is assembled from the production pipeline.</p></div>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <div><h3>Stage</h3><p>The engine uploads the file to the platform in a private / unpublished state and validates that titles, captions and AI labels were accepted before proceeding.</p></div>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <div><h3>Schedule &amp; GO</h3><p>The operator confirms, and a single action sets the native publish time (or publishes now). Nothing is posted without that explicit confirmation.</p></div>
+        </div>
+        <div class="step">
+          <div class="n">4</div>
+          <div><h3>Verify</h3><p>The engine reads back the platform's API response to confirm the video exists and is scheduled correctly, then records the result.</p></div>
+        </div>
+      </div>
+      <div class="flow">
+        <b>Finished render</b><span class="arw">→</span><b>Stage (private)</b><span class="arw">→</span><b>Confirm GO</b><span class="arw">→</span><b>Scheduled &amp; live</b>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <p class="eyebrow">About Spike</p>
+      <h2>The channel this tool serves</h2>
+      <p class="sub">Spike is an animated news show fronted by Spike — a 2D cartoon news-anchor mascot — covering technology, business and science for an English-speaking audience. Every episode is written, animated, voiced and edited in-house, then released through Spike Publisher. The tool exists only to publish this one channel's output.</p>
+      <div class="about-links">
+        <a class="chip" href="https://www.youtube.com/@WatchSpike" rel="noopener">
+          <span class="d"></span> YouTube — @WatchSpike
+        </a>
+        <a class="chip" href="https://www.tiktok.com/@spikeyt" rel="noopener">
+          <span class="d"></span> TikTok — @spikeyt
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" style="border-bottom:none">
+    <div class="wrap">
+      <p class="eyebrow">Contact</p>
+      <h2>Questions about the app or this site</h2>
+      <p class="sub">Spike Publisher is operated by an individual creator. For any questions — including platform app-review, data or privacy questions — reach the operator directly.</p>
+      <div class="contact-box">
+        <div>
+          <p class="lbl">Email</p>
+          <p class="val"><a href="mailto:neganovlevs@gmail.com">neganovlevs@gmail.com</a></p>
+        </div>
+        <a class="btn" href="mailto:neganovlevs@gmail.com">Send an email</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap foot-in">
+    <div>© 2026 Spike Publisher · Operated by the creator of the Spike channel</div>
+    <nav class="foot-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="mailto:neganovlevs@gmail.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
