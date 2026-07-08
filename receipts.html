@@ -69,6 +69,9 @@
   .badge.checked{color:var(--lime); border:1px solid var(--ring); background:rgba(155,225,93,.07)}
   .badge.scoped{color:var(--amber); border:1px solid var(--amber-ring); background:rgba(225,192,93,.07)}
   .badge.pending{color:var(--muted); border:1px solid var(--line); background:var(--bg2)}
+  .badge.voided{color:var(--muted); border:1px dashed var(--line); background:transparent; letter-spacing:.08em}
+  .rec.voided .claim{text-decoration:line-through; opacity:.55}
+  .why{margin:6px 0 0; font-size:.86rem; line-height:1.5; color:var(--muted)}
   .rec .meta{color:var(--dim); font-size:13.5px}
   .rec .claim{font-size:17.5px; font-weight:650; margin:0 0 8px}
   .rec .verdict{color:var(--muted); font-size:15.5px; margin:0 0 6px}
@@ -225,6 +228,12 @@
         </div>
 
         <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jul 8, 2026</span></div>
+          <p class="claim">Fi fixes the Starlink dog collar &mdash; either the reconnect stall (five minutes of nothing, twice in half an hour) or the two-day battery, in a v2 or a firmware update. &ldquo;Version one found the dog; version two has to stay awake.&rdquo; (~70%)</p>
+          <p class="due">July 8, 2027</p>
+        </div>
+
+        <div class="rec">
           <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jul 5, 2026</span></div>
           <p class="claim">Take-Two's ~$8B bookings guidance is the honest number to judge GTA 6 by — not any leaked "revenue" figure</p>
           <p class="due">first post-launch earnings report</p>
@@ -248,10 +257,10 @@
           <p class="due">2028 roadmap dates</p>
         </div>
 
-        <div class="rec">
-          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jun 24, 2026</span></div>
+        <div class="rec voided">
+          <div class="top"><span class="badge voided">VOIDED</span><span class="meta">opened Jun 24, 2026 &middot; voided Jul 8, 2026</span></div>
           <p class="claim">The Steam Machine actually ships June 30, 2026, at the announced price</p>
-          <p class="due">June 30, 2026</p>
+          <p class="why"><b>Never a prediction, so it never gets graded.</b> Valve had already announced the price and the June 30 date &mdash; the episode restated them. Calling that a correct call would be exactly the move Spike busts. Struck, and left here on purpose: a ledger that quietly deletes its bad entries is worth nothing.</p>
         </div>
 
         <div class="rec">
