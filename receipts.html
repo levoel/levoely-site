@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spike's Receipts — every on-air verdict, graded in public</title>
+<meta name="description" content="The public ledger of every claim Spike has checked on air: the verdict, the receipt, and the open predictions still waiting to be graded. Misses stay on the board forever.">
+<style>
+  :root{
+    --bg:#0e1411; --bg2:#131b17; --panel:#18211c; --line:#26332b;
+    --ink:#e7efe9; --muted:#9db0a5; --dim:#7c8f84;
+    --lime:#9be15d; --lime2:#5fcf5f; --ring:rgba(155,225,93,.35);
+    --red:#e15d5d; --red-ring:rgba(225,93,93,.35);
+    --amber:#e1c05d; --amber-ring:rgba(225,192,93,.35);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji",sans-serif;
+    line-height:1.6; font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--lime); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:960px; margin:0 auto; padding:0 22px}
+  header.nav{
+    position:sticky; top:0; z-index:10;
+    background:rgba(14,20,17,.82); backdrop-filter:saturate(140%) blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{display:flex; align-items:center; justify-content:space-between; height:60px}
+  .brand{display:flex; align-items:center; gap:11px; font-weight:700; color:var(--ink); font-size:18px}
+  .brand:hover{text-decoration:none}
+  .logo{
+    width:30px; height:30px; border-radius:8px; flex:0 0 auto;
+    background:linear-gradient(135deg,var(--lime),var(--lime2));
+    display:grid; place-items:center; color:#0e1411; font-weight:900; font-size:17px;
+  }
+  .nav-links{display:flex; gap:20px; font-size:15px}
+  .nav-links a{color:var(--muted)}
+  .nav-links a:hover{color:var(--ink); text-decoration:none}
+
+  .hero{padding:74px 0 54px; border-bottom:1px solid var(--line)}
+  .pill{
+    display:inline-block; font-size:13px; letter-spacing:.3px; color:var(--lime);
+    border:1px solid var(--ring); background:rgba(155,225,93,.06);
+    padding:5px 12px; border-radius:999px; margin-bottom:22px;
+  }
+  h1{font-size:clamp(30px,5vw,46px); line-height:1.12; margin:0 0 16px; letter-spacing:-.02em}
+  h1 .g{background:linear-gradient(120deg,var(--lime),#d8f7a6); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lede{font-size:clamp(17px,2.4vw,20px); color:var(--muted); max-width:680px; margin:0 0 26px}
+
+  section{padding:56px 0; border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--lime2); margin:0 0 10px; font-weight:700}
+  h2{font-size:clamp(23px,3.4vw,30px); margin:0 0 14px; letter-spacing:-.01em}
+  p.sub{color:var(--muted); max-width:680px; margin:0 0 30px}
+
+  .ledger{display:grid; gap:14px}
+  .rec{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+  }
+  .rec .top{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px}
+  .badge{
+    display:inline-block; font-size:12.5px; font-weight:800; letter-spacing:.08em;
+    padding:4px 11px; border-radius:999px;
+  }
+  .badge.busted{color:var(--red); border:1px solid var(--red-ring); background:rgba(225,93,93,.07)}
+  .badge.checked{color:var(--lime); border:1px solid var(--ring); background:rgba(155,225,93,.07)}
+  .badge.scoped{color:var(--amber); border:1px solid var(--amber-ring); background:rgba(225,192,93,.07)}
+  .badge.pending{color:var(--muted); border:1px solid var(--line); background:var(--bg2)}
+  .rec .meta{color:var(--dim); font-size:13.5px}
+  .rec .claim{font-size:17.5px; font-weight:650; margin:0 0 8px}
+  .rec .verdict{color:var(--muted); font-size:15.5px; margin:0 0 6px}
+  .rec .verdict b{color:var(--ink)}
+  .rec .receipt{color:var(--dim); font-size:14px; margin:0}
+  .rec .receipt::before{content:"receipt: "; color:var(--lime2); font-weight:700; letter-spacing:.04em}
+  .rec .due{color:var(--dim); font-size:14px; margin:6px 0 0}
+  .rec .due::before{content:"grades: "; color:var(--amber); font-weight:700; letter-spacing:.04em}
+
+  .empty{
+    background:var(--panel); border:1px dashed var(--line); border-radius:14px; padding:26px;
+    color:var(--muted); font-size:15.5px;
+  }
+  .empty b{color:var(--ink)}
+
+  .rules{display:grid; gap:18px; grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px}
+  .card h3{margin:0 0 8px; font-size:18px}
+  .card p{margin:0; color:var(--muted); font-size:15.5px}
+  .card .ic{
+    width:38px; height:38px; border-radius:10px; margin-bottom:14px;
+    background:rgba(155,225,93,.1); border:1px solid var(--ring);
+    display:grid; place-items:center; color:var(--lime); font-weight:800; font-size:18px;
+  }
+
+  footer.site{padding:34px 0 46px; color:var(--dim); font-size:14.5px}
+  .foot-in{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center}
+  .foot-links{display:flex; gap:18px; flex-wrap:wrap}
+  .foot-links a{color:var(--muted)}
+  .foot-links a:hover{color:var(--ink)}
+
+  @media(max-width:720px){
+    body{font-size:16px}
+    .rules{grid-template-columns:1fr}
+    .nav-links{gap:14px; font-size:14px}
+    .hero{padding:52px 0 40px}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html"><span class="logo">S</span> Spike</a>
+    <nav class="nav-links">
+      <a href="#resolved">Graded</a>
+      <a href="#pending">Pending</a>
+      <a href="#misses">Misses</a>
+      <a href="https://www.youtube.com/@WatchSpike" rel="noopener">YouTube</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="pill">Every verdict, graded in public</span>
+      <h1><span class="g">Spike's Receipts</span><br>The ledger of every on-air call</h1>
+      <p class="lede">Spike checks viral claims on air and rules on them — CHECKED or BUSTED. This page is the permanent record: every verdict, the receipt behind it, and every open prediction still waiting to be graded. When Spike gets one wrong, it goes on this board and stays here. That's the deal.</p>
+    </div>
+  </section>
+
+  <section id="resolved">
+    <div class="wrap">
+      <p class="eyebrow">Graded</p>
+      <h2>Resolved verdicts</h2>
+      <p class="sub">Calls Spike made on air that have been checked against primary sources. Newest first. Being fair before the bust is part of the format — when part of a claim is real, it gets credited on air too.</p>
+      <div class="ledger">
+
+        <div class="rec">
+          <div class="top"><span class="badge checked">CHECKED</span><span class="meta">Jul 6, 2026 · shorts</span></div>
+          <p class="claim">Even Realities' camera-free smart glasses "hit a $1B valuation"</p>
+          <p class="verdict"><b>Real money, not paper.</b> An actually-priced round — $150M raised, led by Tencent and Meituan — not the press-release-valuation class. No paper billion here; the product has 10k+ units sold.</p>
+          <p class="receipt">TechCrunch (the round) + SCMP / PitchBook (company, product, sales)</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge checked">REVEALED</span><span class="meta">Jul 2, 2026 · shorts</span></div>
+          <p class="claim">"Sony is closing the PS3/Vita store" — reported as news</p>
+          <p class="verdict"><b>It wasn't news.</b> The closure was announced in 2021, reversed after backlash, then quietly re-run years later — "it just waited for you to forget."</p>
+          <p class="receipt">the 2021 announcement and reversal record</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge busted">BUSTED</span><span class="meta">Jun 28, 2026 · shorts</span></div>
+          <p class="claim">Viral Polymarket "$50K winner" clips</p>
+          <p class="verdict"><b>Staged.</b> The screenshots were built on clone sites — and the bets shown would actually have <b>lost</b> more than $166K.</p>
+          <p class="receipt">Wall Street Journal investigation</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge scoped">SCOPED</span><span class="meta">Jun 28, 2026 · shorts</span></div>
+          <p class="claim">"China wins the AI race" — supercomputer headlines</p>
+          <p class="verdict"><b>A crown, but the wrong one.</b> Raw-Linpack ranking only, not AI capability. The real story is the sanctions backfire that pushed the build.</p>
+          <p class="receipt">TOP500 listing vs. the actual claim</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge busted">BUSTED</span><span class="meta">Jun 26, 2026 · shorts</span></div>
+          <p class="claim">GTA 6 "$3B revenue / 39M pre-orders in 24 hours"</p>
+          <p class="verdict"><b>Fan fiction.</b> An unsourced rumor roughly 3.5× the all-time record; Rockstar disclosed nothing. The origin post even self-tagged as "RUMOR".</p>
+          <p class="receipt">no primary source exists; publisher disclosed zero</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge busted">BUSTED</span><span class="meta">Jun 25, 2026 · shorts</span></div>
+          <p class="claim">Donut Lab's "world-first solid-state battery"</p>
+          <p class="verdict"><b>Ordinary lithium-ion</b> (~300 Wh/kg), per independent measurement. Credit where due: the 5-minute charge is real.</p>
+          <p class="receipt">20+ experts and VTT measurement</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge busted">BUSTED</span><span class="meta">Jun 22, 2026 · shorts</span></div>
+          <p class="claim">"Humans regrew a limb" headlines</p>
+          <p class="verdict"><b>The headline wasn't the study.</b> The actual finding was far narrower than the claim — and the real result got credited on air.</p>
+          <p class="receipt">the study's own authors reject the headline framing</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge busted">BUSTED</span><span class="meta">Jun 20, 2026 · shorts</span></div>
+          <p class="claim">KPMG agentic-AI report citations</p>
+          <p class="verdict"><b>40 of 45 citations fabricated.</b> The report was pulled.</p>
+          <p class="receipt">GPTZero analysis + KPMG's own retraction</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge busted">BUSTED</span><span class="meta">Jun 19, 2026 · shorts</span></div>
+          <p class="claim">QuEra's "first fault-tolerant quantum computer"</p>
+          <p class="verdict"><b>"The hardware's still a PDF."</b> A 2028 roadmap with projected qubits, announced as if it were a machine.</p>
+          <p class="receipt">the vendor's own roadmap vs. the claim</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="pending">
+    <div class="wrap">
+      <p class="eyebrow">Pending</p>
+      <h2>Open predictions — on the record, waiting to be graded</h2>
+      <p class="sub">Calls Spike made on air about things that haven't resolved yet. Each one has a date it comes due. When it resolves, it moves up to the graded board — win or lose.</p>
+      <div class="ledger">
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jun 16, 2026</span></div>
+          <p class="claim">GTA 6's November 19, 2026 launch date holds — "that delay was the last one"</p>
+          <p class="due">November 19, 2026</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jun 26, 2026</span></div>
+          <p class="claim">GTA 6 launch pricing lands at $80 base with a ~$100 premium tier</p>
+          <p class="due">at launch</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jul 5, 2026</span></div>
+          <p class="claim">Take-Two's ~$8B bookings guidance is the honest number to judge GTA 6 by — not any leaked "revenue" figure</p>
+          <p class="due">first post-launch earnings report</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jul 5, 2026</span></div>
+          <p class="claim">GTA 6's break-even lives somewhere in the 30–62M copies range — any single confident number you see is marketing</p>
+          <p class="due">post-launch disclosures</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jul 1, 2026</span></div>
+          <p class="claim">Rockstar union tribunal: the fired testers get their hearing this fall — Spike keeps the receipt either way</p>
+          <p class="due">fall 2026</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jun 19, 2026</span></div>
+          <p class="claim">QuEra's fault-tolerant machine actually ships on AWS Braket by 2028 — the "PDF becomes hardware" check</p>
+          <p class="due">2028 roadmap dates</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jun 24, 2026</span></div>
+          <p class="claim">The Steam Machine actually ships June 30, 2026, at the announced price</p>
+          <p class="due">June 30, 2026</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jun 30, 2026</span></div>
+          <p class="claim">Google's Munich appeal: the AI-liability ruling survives</p>
+          <p class="due">appeal outcome</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jul 4, 2026</span></div>
+          <p class="claim">OpenAI / Washington: "nothing's signed" — verdict pending <i>is</i> the verdict until papers exist</p>
+          <p class="due">when papers exist</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jul 5, 2026</span></div>
+          <p class="claim">Disney v. Midjourney (2:25-cv-05275): the discovery ruling becomes the rulebook case for AI training data</p>
+          <p class="due">the court's ruling</p>
+        </div>
+
+        <div class="rec">
+          <div class="top"><span class="badge pending">PENDING</span><span class="meta">opened Jul 6, 2026</span></div>
+          <p class="claim">Nintendo v. Pocketpair: Nintendo doesn't get Palworld pulled — the injunction already failed, 1.0 shipped, and the court won't kill it. "Mark it: November ninth."</p>
+          <p class="due">November 9, 2026</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="misses">
+    <div class="wrap">
+      <p class="eyebrow">Misses</p>
+      <h2>Wrong calls — they stay here forever</h2>
+      <p class="sub">The part most channels don't have. When Spike blows a call, it gets graded on air and logged here with the same prominence as the wins. Nothing on this board is ever deleted.</p>
+      <div class="empty">
+        <b>No graded misses yet.</b> That's partly a young ledger and partly luck — with this many open predictions on the board, some will land here. When one does, you'll see it graded on air first.
+      </div>
+    </div>
+  </section>
+
+  <section id="rules" style="border-bottom:none">
+    <div class="wrap">
+      <p class="eyebrow">The rules</p>
+      <h2>How this ledger works</h2>
+      <div class="rules">
+        <div class="card">
+          <div class="ic">✓</div>
+          <h3>Loud and graded</h3>
+          <p>Every call is made on air, in the episode, before the outcome is known — then graded against primary sources. No quiet edits, no retroactive hedging.</p>
+        </div>
+        <div class="card">
+          <div class="ic">⚖</div>
+          <h3>Boldness counts</h3>
+          <p>A safe call graded right is worth less than a bold one. Grades weigh how contrarian the call was when Spike made it, not just whether it landed.</p>
+        </div>
+        <div class="card">
+          <div class="ic">∞</div>
+          <h3>Misses are permanent</h3>
+          <p>A correction gets the same screen time as the original claim. Wrong calls stay on this board forever — that's what makes the right ones worth anything.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap foot-in">
+    <div>© 2026 Spike · Every claim on this page was ruled on-air first</div>
+    <nav class="foot-links">
+      <a href="https://www.youtube.com/@WatchSpike" rel="noopener">YouTube — @WatchSpike</a>
+      <a href="index.html">Spike Publisher</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
